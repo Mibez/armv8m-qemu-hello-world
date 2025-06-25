@@ -37,7 +37,7 @@ Make sure mps2-an505 is supported by using qemu-system-arm after building comple
 $ qemu-system-arm -machine help
 ```
 
-Quickly Started
+Quick Start
 ---
 
 * run
@@ -52,6 +52,12 @@ $ make qemu
 ```
 $ make
 $ make gdbqemu
+
+qemu-system-arm -machine mps2-an505 -cpu cortex-m33 -semihosting \
+                    -m 16 \
+                    -nographic -serial mon:stdio \
+                    -kernel kernel.elf 
+Hello World!
 ```
 
 * debug kernel.elf in qemu
