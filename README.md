@@ -1,23 +1,21 @@
 
-armv8m-hello
+armv8m-qemu-hello-world
 ---
 
 Prerequisites
 ---
 
-* OS: 
-ubuntu 18.04
+Download and extract your favorite cross-compile toolchain from https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads
 
+(tested on ```arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi```)
 ```
-sudo apt-get install git
-sudo apt-get install python
+wget https://developer.arm.com/-/media/Files/downloads/gnu/14.2.rel1/binrel/arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi.tar.xz
+tar -xvf arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi.tar.xz
 ```
 
-* gcc linaro toolchain (armv8l-linux-gnueabihf):
-download [gcc-linaro-7.3.1-2018.04-rc1-x86_64_armv8l-linux-gnueabihf](http://snapshots.linaro.org/components/toolchain/binaries/7.3-2018.04-rc1/armv8l-linux-gnueabihf/) and extract into the project directory.
+Build or install QEMU
 
-* build qemu
-
+Build:
 ```
 $ git clone https://github.com/qemu/qemu.git
 $ cd qemu	
@@ -28,7 +26,12 @@ $ make
 $ make install
 ```
 
-inspect mps2-an505 by using qemu-system-arm after building completely qemu
+Install:
+```
+sudo apt install qemu-system
+```
+
+Make sure mps2-an505 is supported by using qemu-system-arm after building completely qemu
 
 ```
 $ qemu-system-arm -machine help

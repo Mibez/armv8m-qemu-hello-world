@@ -1,7 +1,8 @@
 IMAGE := kernel.elf
 
-PWD_TOOLCHAIN = ./gcc-linaro-7.3.1-2018.04-rc1-x86_64_armv8l-linux-gnueabihf/bin/
-CROSS_COMPILE = $(PWD_TOOLCHAIN)/armv8l-linux-gnueabihf-
+ifndef CROSS_COMPILE
+CROSS_COMPILE = ./arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi/bin/arm-none-eabi-
+endif
 
 CC = $(CROSS_COMPILE)gcc
 LD = $(CROSS_COMPILE)ld
@@ -26,21 +27,21 @@ $(IMAGE): kernel.ld boot.o $(OBJS)
 
 dumpvmstate:
 	qemu-system-arm -machine mps2-an505 -cpu cortex-m33 \
-	                    -m 1024 \
+	                    -m 16 \
 			    -nographic -serial mon:stdio \
 	                    -kernel $(IMAGE) \
 			    -dump-vmstate vmstate.json 
 
 qemu:
 	@qemu-system-arm -M ? | grep mps2-an505 >/dev/null || exit
-	qemu-system-arm -machine mps2-an505 -cpu cortex-m33 \
-	                    -m 4096 \
+	qemu-system-arm -machine mps2-an505 -cpu cortex-m33 -semihosting \
+	                    -m 16 \
 			    -nographic -serial mon:stdio \
 	                    -kernel $(IMAGE) 
-			   
+
 gdbserver:
-	qemu-system-arm -machine mps2-an505 -cpu cortex-m33 \
-	                    -m 4096 \
+	qemu-system-arm -machine mps2-an505 -cpu cortex-m33 -semihosting \
+	                    -m 16 \
 			    -nographic -serial mon:stdio \
 	                    -kernel $(IMAGE) \
 			    -S -s 
@@ -49,7 +50,7 @@ gdb: $(IMAGE)
 
 
 gdbqemu:
-	gdb --args qemu-system-arm -machine mps2-an505 -cpu cortex-m33  -m 4096  -nographic -serial mon:stdio -kernel kernel.elf
+	gdb --args qemu-system-arm -machine mps2-an505 -cpu cortex-m33 -semihosting -m 16 -nographic -serial mon:stdio -kernel kernel.elf
 
 
 			    
