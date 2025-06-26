@@ -3,6 +3,9 @@ IMAGE := kernel.elf
 ifndef CROSS_COMPILE
 CROSS_COMPILE = ./arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi/bin/arm-none-eabi-
 endif
+ifndef QEMU
+QEMU = qemu-system-arm
+endif
 
 CC = $(CROSS_COMPILE)gcc
 LD = $(CROSS_COMPILE)ld
@@ -11,7 +14,6 @@ OBJDUMP = $(CROSS_COMPILE)objdump
 READELF = $(CROSS_COMPILE)readelf
 
 CFLAGS = -mcpu=cortex-m33 -g -nostdlib -nostartfiles -ffreestanding
-
 all: $(IMAGE)
 
 OBJS = main.o
@@ -26,21 +28,21 @@ $(IMAGE): kernel.ld boot.o $(OBJS)
 	$(READELF) -A $(IMAGE)
 
 dumpvmstate:
-	qemu-system-arm -machine mps2-an505 -cpu cortex-m33 \
+	$(QEMU) -machine mps2-an505 -cpu cortex-m33 \
 	                    -m 16 \
 			    -nographic -serial mon:stdio \
 	                    -kernel $(IMAGE) \
 			    -dump-vmstate vmstate.json 
 
 qemu:
-	@qemu-system-arm -M ? | grep mps2-an505 >/dev/null || exit
-	qemu-system-arm -machine mps2-an505 -cpu cortex-m33 -semihosting \
+	@$(QEMU) -M ? | grep mps2-an505 >/dev/null || exit
+	$(QEMU) -machine mps2-an505 -cpu cortex-m33 -semihosting \
 	                    -m 16 \
 			    -nographic -serial mon:stdio \
 	                    -kernel $(IMAGE) 
 
 gdbserver:
-	qemu-system-arm -machine mps2-an505 -cpu cortex-m33 -semihosting \
+	$(QEMU) -machine mps2-an505 -cpu cortex-m33 -semihosting \
 	                    -m 16 \
 			    -nographic -serial mon:stdio \
 	                    -kernel $(IMAGE) \
@@ -50,7 +52,7 @@ gdb: $(IMAGE)
 
 
 gdbqemu:
-	gdb --args qemu-system-arm -machine mps2-an505 -cpu cortex-m33 -semihosting -m 16 -nographic -serial mon:stdio -kernel kernel.elf
+	gdb --args $(QEMU) -machine mps2-an505 -cpu cortex-m33 -semihosting -m 16 -nographic -serial mon:stdio -kernel kernel.elf
 
 
 			    
