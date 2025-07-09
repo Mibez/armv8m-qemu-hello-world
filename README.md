@@ -31,7 +31,7 @@ Install:
 sudo apt install qemu-system
 ```
 
-Make sure mps2-an505 is supported by using qemu-system-arm after building completely qemu
+Make sure the board you're targeting is supported by using qemu-system-arm after building qemu
 
 ```
 $ qemu-system-arm -machine help
@@ -74,8 +74,17 @@ a terminal for gdb
 $ make gdb
 ```
 
+STM32 board
+---
 
+In order to run the example with STM32U545 board, compile the custom QEMU version from
+https://github.com/Mibez/qemu
 
+After this, run the same Make command with path to QEMU and provide the BOARD, for example
+
+```
+$ QEMU=../qemu/build/qemu-system-arm BOARD=stm32u545board make
+```
 
 
 
